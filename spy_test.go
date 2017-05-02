@@ -19,7 +19,7 @@ var _ = Describe("Spy", func() {
 
 	It("includes a pipe consumer", func() {
 		spy := Spy("grass").MockContents()
-		Expect(spy).To(ContainSubstring("while read -t0.05; do"))
+		Expect(spy).To(ContainSubstring("while read -r -t0.1; do"))
 	})
 
 	It("can be exported", func() {

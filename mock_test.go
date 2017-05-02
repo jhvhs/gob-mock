@@ -14,7 +14,7 @@ var _ = Describe("Mock", func() {
 
 	It("includes the pipe handling", func() {
 		mock := Mock("helicopter", "").MockContents()
-		Expect(mock).To(ContainSubstring("while read -t0.05; do"))
+		Expect(mock).To(ContainSubstring("while read -r -t0.1; do"))
 
 	})
 
