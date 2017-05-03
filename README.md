@@ -1,5 +1,5 @@
 # gob-mock
-A simple mocking framework for bash testing with [golang](https://golang.org/) via [go-basher](https://github.com/progrium/go-basher/)
+A simple mocking helper library for bash testing with [golang](https://golang.org/) via [go-basher](https://github.com/progrium/go-basher/)
 
 ## Quick intro
 
