@@ -17,8 +17,4 @@ var _ = Describe("Stub", func() {
 		Expect(stub).To(MatchRegexp("while read -t0.05; do\\s+:\\s+done"))
 	})
 
-	It("includes an exported shell stub", func() {
-		stub := ExportedStub("shred_four_rhubarbs").MockContents()
-		Expect(stub).To(MatchRegexp("}\\s+export -f shred_four_rhubarbs\n"))
-	})
 })

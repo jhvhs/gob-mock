@@ -4,25 +4,15 @@ import "fmt"
 
 // Produces a bash function with a given name.
 func Stub(name string) GoBMock {
-	return &stub{name: name, export: false}
-}
-
-// Produces a bash function with a given name
-// that is exported to child processes
-func ExportedStub(name string) GoBMock {
-	return &stub{name: name, export: true}
+	return &stub{name: name}
 }
 
 type stub struct {
-	name   string
-	export bool
+	name string
 }
 
 func (s *stub) MockContents() string {
-	if s.export {
-		return s.stubFunction() + s.stubExport()
-	}
-	return s.stubFunction()
+	return s.stubFunction() + s.stubExport()
 }
 
 func (s *stub) stubExport() string {

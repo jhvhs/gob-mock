@@ -30,7 +30,7 @@ var _ = Describe("Integration", func() {
 	})
 
 	BeforeEach(func() {
-		bash, _ = basher.NewContext(bashPath, false)
+		bash, _ = basher.NewContext(bashPath, true)
 		stdout = gbytes.NewBuffer()
 		stderr = gbytes.NewBuffer()
 		bash.Stdout = io.MultiWriter(GinkgoWriter, stdout)
@@ -73,7 +73,7 @@ var _ = Describe("Integration", func() {
 		It("can be used in a child process", func() {
 			sourceString(subShellTest)
 
-			gobs := []GoBMock{ExportedStub("curl")}
+			gobs := []GoBMock{Stub("curl")}
 			ApplyMocks(bash, gobs)
 			status, err := bash.Run("main_test", []string{})
 			Expect(err).NotTo(HaveOccurred())
@@ -152,7 +152,7 @@ var _ = Describe("Integration", func() {
 		It("can be exported to child processes", func() {
 			sourceString(subShellTest)
 
-			gobs := []GoBMock{ExportedMock("curl", "")}
+			gobs := []GoBMock{Mock("curl", "")}
 			ApplyMocks(bash, gobs)
 			status, err := bash.Run("main_test", []string{})
 			Expect(err).NotTo(HaveOccurred())

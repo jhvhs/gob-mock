@@ -22,8 +22,4 @@ var _ = Describe("Spy", func() {
 		Expect(spy).To(ContainSubstring("while read -r -t0.1; do"))
 	})
 
-	It("can be exported", func() {
-		spy := ExportedSpy("wok").MockContents()
-		Expect(spy).To(ContainSubstring("\nexport -f wok\n"))
-	})
 })

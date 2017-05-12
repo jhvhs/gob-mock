@@ -7,30 +7,17 @@ import "fmt"
 // as well as any data passed into it via STDIN.
 // All reporting messages are sent to STDERR.
 func Spy(name string) GoBMock {
-	return &spy{name: name, export: false}
-}
-
-// Produces a bash function with a given name.
-// The function will report it's arguments
-// as well as any data passed into it via STDIN.
-// All reporting messages are sent to STDERR.
-//
-// This function will be exported to the child processes
-func ExportedSpy(name string) GoBMock {
-	return &spy{name: name, export: true}
+	return &spy{name: name}
 }
 
 type spy struct {
-	name   string
-	export bool
+	name string
 }
 
 func (s *spy) MockContents() string {
-	if s.export {
-		return s.spyFunction() + s.spyExport()
-	}
-	return s.spyFunction()
+	return s.spyFunction() + s.spyExport()
 }
+
 func (s *spy) spyExport() string {
 	return fmt.Sprintf(exportDefinition, s.name)
 }

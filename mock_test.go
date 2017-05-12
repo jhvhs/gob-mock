@@ -23,8 +23,4 @@ var _ = Describe("Mock", func() {
 		Expect(mock).To(ContainSubstring("cakes and coffee"))
 	})
 
-	It("can be exported", func() {
-		mock := ExportedMock("doodle", "junkie").MockContents()
-		Expect(mock).To(ContainSubstring("\nexport -f doodle\n"))
-	})
 })
