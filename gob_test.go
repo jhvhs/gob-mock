@@ -103,9 +103,9 @@ var _ = Describe("Integration", func() {
 			ApplyMocks(bash, gobs)
 			sourceString("test_main() { curl abc; curl cfg; curl dbc; }")
 			bash.Run("test_main", []string{""})
-			Expect(stderr).To(gbytes.Say("\\[1\\] curl abc"))
-			Expect(stderr).To(gbytes.Say("\\[2\\] curl cfg"))
-			Expect(stderr).To(gbytes.Say("\\[3\\] curl dbc"))
+			Expect(stderr).To(gbytes.Say("<1> curl abc"))
+			Expect(stderr).To(gbytes.Say("<2> curl cfg"))
+			Expect(stderr).To(gbytes.Say("<3> curl dbc"))
 		})
 
 		It("reports the standard input", func() {
@@ -116,7 +116,7 @@ var _ = Describe("Integration", func() {
 			gobs := []GoBMock{Spy("curl")}
 			ApplyMocks(bash, gobs)
 			bash.Run("test_main", []string{})
-			Expect(stderr).To(gbytes.Say("\\[1 received\\] input:\n"))
+			Expect(stderr).To(gbytes.Say("<1 received> input:\n"))
 			Expect(stderr).To(gbytes.Say("Waves travel with malaria.\n"))
 			Expect(stderr).To(gbytes.Say("The self has samadhi"))
 			Expect(stderr).To(gbytes.Say("[1 end received]"))
@@ -134,7 +134,7 @@ var _ = Describe("Integration", func() {
 			bash.Run("test_main", []string{})
 
 			Expect(stdout).To(gbytes.Say("One for all"))
-			Expect(stderr).To(gbytes.Say("\\[1\\] printf One for all"))
+			Expect(stderr).To(gbytes.Say("<1> printf One for all"))
 		})
 
 		It("pipes the input when calling through", func() {
@@ -151,8 +151,8 @@ var _ = Describe("Integration", func() {
 			ApplyMocks(bash, gobs)
 			bash.Run("test_main", []string{"lemo"})
 
-			Expect(stderr).To(gbytes.Say("\\[1\\] grep lemo"))
-			Expect(stderr).To(gbytes.Say("\\[1 received"))
+			Expect(stderr).To(gbytes.Say("<1> grep lemo"))
+			Expect(stderr).To(gbytes.Say("<1 received"))
 			Expect(stdout).To(gbytes.Say("lemons"))
 		})
 	})
@@ -201,8 +201,8 @@ var _ = Describe("Integration", func() {
 			ApplyMocks(bash, gobs)
 			bash.Run("test_main", []string{})
 
-			Expect(stderr).To(gbytes.Say("\\[1\\] printf monkey"))
-			Expect(stderr).To(gbytes.Say("\\[2\\] printf honey"))
+			Expect(stderr).To(gbytes.Say("<1> printf monkey"))
+			Expect(stderr).To(gbytes.Say("<2> printf honey"))
 			Expect(stdout).To(gbytes.Say("monkey"))
 			Expect(stdout).NotTo(gbytes.Say("honey"))
 			Expect(string(stdout.Contents())).To(ContainSubstring("berries"))

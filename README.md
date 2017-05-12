@@ -26,7 +26,21 @@ Spy does everything a stub does, but in addition, it will print the function nam
   ApplyMocks(bash, mocks)
   status, _ := bash.Run("wget", []string{"zaa://qwee.dooo", "fus", "ro", "dah"})
   Expect(status).To(Equal(0))
-  Expect(stderr).To(gbytes.Say("[1] wget zaa://qwee.dooo fus ro dah"))
+  Expect(bash.StdErr).To(gbytes.Say("<1> wget zaa://qwee.dooo fus ro dah"))
+```
+
+A spy is also able to invoke the underlying executable, if needed
+```go
+  bash := basher.NewContext("/path/to/bash", false)
+  bash.StdErr = gbytes.NewBuffer()
+  bash.StdOut = gbytes.NewBuffer()
+  mocks := []GoBMock{SpyAndCallThrough("ls")}
+  ApplyMocks(bash, mocks)
+  
+  status, _ := bash.Run("ls", []string{"/"})
+  Expect(status).To(Equal(0))
+  Expect(bash.StdErr).To(gbytes.Say("<1> ls /"))
+  Expect(bash.StdOut).To(gbytes.Say("etc"))
 ```
 
 ### Mocks
@@ -41,8 +55,8 @@ The mock may produce output which depends on the supplied arguments:
   ApplyMocks(bash, mocks)
   status, _ := bash.Run("wget", []string{"quux", "fus", "ro", "dah"})
   Expect(status).To(Equal(0))
-  Expect(stderr).To(gbytes.Say("[1] wget quux fus ro dah"))
-  Expect(stdout).To(gbytes.Say("Yes"))
+  Expect(bash.StdErr).To(gbytes.Say("<1> wget quux fus ro dah"))
+  Expect(bash.StdOut).To(gbytes.Say("Yes"))
 ```
 
 An exit code can be simulated by using the `return` keyword with the appropriate number:
@@ -55,20 +69,23 @@ An exit code can be simulated by using the `return` keyword with the appropriate
   Expect(status).To(Equal(12))
 ```
 
-If a mock is referring to an executable, it can use `which` to put the call through when needed, while still recording the invocation details:
-
+A mock is also able to call through to an executable. In order to do so, in needs a condition
+to determine when to use the mock behaviour, and when to call through. In both cases, the invocation
+will be recorded.
 ```go
   bash := basher.NewContext("/path/to/bash", false)
   bash.StdErr = gbytes.NewBuffer()
   bash.StdOut = gbytes.NewBuffer()
-  mocks := []GoBMock{Mock("curl", `$(which curl) "$@"`)}
+  mocks := []GoBMock{MockOrCallThrough("curl", "echo 'Here is some contents'", `[[ "$1" =~ "google" ]]`)}
   ApplyMocks(bash, mocks)
   status, _ := bash.Run("curl", []string{"https://www.google.ie/"})
   Expect(status).To(Equal(0))
-  Expect(stderr).To(gbytes.Say("[1] curl https://www.google.ie/"))
-  Expect(stdout).To(gbytes.Say("<title>Google</title>"))
+  Expect(bash.StdErr).To(gbytes.Say("<1> curl https://www.google.ie/"))
+  
+  status, _ = bash.Run("curl", []string{"https://www.aeiou.ea/"})
+  Expect(status).To(Equal(0))
+  Expect(bash.StdErr).To(gbytes.Say("<1> curl https://www.aeiou.ea/"))
+  Expect(bash.StdOut).To(gbytes.Say("Here is some contents"))
 ```
-
-All mocks have an *Exported counterpart that exports the mocking function for all the child processes.
 
 More examples can be found in the [integration tests](./gob_test.go).

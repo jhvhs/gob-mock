@@ -15,11 +15,11 @@ const (
             in_line_count=$((in_line_count + 1))
           done
           callCounter=$((callCounter + 1))
-          echo "[$callCounter] %[1]s $*" > /dev/fd/2
+          echo "<$callCounter> %[1]s $*" > /dev/fd/2
           if [ ${in_line_count} -gt 0 ]; then
-            echo "[$callCounter received] input:" > /dev/fd/2
+            echo "<$callCounter received> input:" > /dev/fd/2
             printf '%%s\n' "${in_lines[@]}" > /dev/fd/2
-            echo "[$callCounter end received]" > /dev/fd/2
+            echo "<$callCounter end received>" > /dev/fd/2
           fi
         `
 	mockDefinition   = "%[2]s\n"
