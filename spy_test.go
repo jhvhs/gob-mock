@@ -22,4 +22,9 @@ var _ = Describe("Spy", func() {
 		Expect(spy).To(ContainSubstring("while read -r -t0.1; do"))
 	})
 
+	It("can call through to the executable", func() {
+		spy := SpyAndCallThrough("squash").MockContents()
+		Expect(spy).To(ContainSubstring("$(which squash)"))
+	})
+
 })

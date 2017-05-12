@@ -8,12 +8,17 @@ import "fmt"
 // All reporting messages are sent to STDERR.
 // The `mockScript` string will be inserted at the end.
 func Mock(name string, mockScript string) GoBMock {
-	return &mock{name: name, script: mockScript}
+	return &mock{name: name, script: mockScript, condition: ""}
+}
+
+func MockOrCallThrough(name string, mockScript string, callThroughCondition string) GoBMock {
+	return &mock{name: name, script: mockScript, condition: callThroughCondition}
 }
 
 type mock struct {
-	name   string
-	script string
+	name      string
+	script    string
+	condition string
 }
 
 func (m *mock) MockContents() string {
@@ -25,6 +30,12 @@ func (m *mock) mockExport() string {
 }
 
 func (m *mock) mockFunction() string {
-	script := scriptStart + spyDefinition + mockDefinition + scriptEnd
+	script := scriptStart + spyDefinition + m.mockBody() + scriptEnd
 	return fmt.Sprintf(script, m.name, m.script)
+}
+func (m *mock) mockBody() string {
+	if m.condition != "" {
+		return "if " + m.condition + "; then\n" + callThroughDefinition + "else\n" + mockDefinition + "fi\n"
+	}
+	return mockDefinition
 }

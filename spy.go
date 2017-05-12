@@ -7,11 +7,16 @@ import "fmt"
 // as well as any data passed into it via STDIN.
 // All reporting messages are sent to STDERR.
 func Spy(name string) GoBMock {
-	return &spy{name: name}
+	return &spy{name: name, withCallThrough: false}
+}
+
+func SpyAndCallThrough(name string) GoBMock {
+	return &spy{name: name, withCallThrough: true}
 }
 
 type spy struct {
-	name string
+	name            string
+	withCallThrough bool
 }
 
 func (s *spy) MockContents() string {
@@ -23,6 +28,9 @@ func (s *spy) spyExport() string {
 }
 
 func (s *spy) spyFunction() string {
-	script := scriptStart + spyDefinition + scriptEnd
-	return fmt.Sprintf(script, s.name)
+	script := scriptStart + spyDefinition
+	if s.withCallThrough {
+		script = script + callThroughDefinition
+	}
+	return fmt.Sprintf(script + scriptEnd, s.name)
 }

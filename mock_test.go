@@ -23,4 +23,9 @@ var _ = Describe("Mock", func() {
 		Expect(mock).To(ContainSubstring("cakes and coffee"))
 	})
 
+	It("can conditionally call through", func() {
+		mock := MockOrCallThrough("printf", "echo 'starships in bottles'", "[ $1 == 'monkey' ]")
+		Expect(mock.MockContents()).To(ContainSubstring("monkey"))
+	})
+
 })

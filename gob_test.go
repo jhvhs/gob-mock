@@ -115,11 +115,45 @@ var _ = Describe("Integration", func() {
 				}`)
 			gobs := []GoBMock{Spy("curl")}
 			ApplyMocks(bash, gobs)
-			bash.Run("test_main", []string{""})
+			bash.Run("test_main", []string{})
 			Expect(stderr).To(gbytes.Say("\\[1 received\\] input:\n"))
 			Expect(stderr).To(gbytes.Say("Waves travel with malaria.\n"))
 			Expect(stderr).To(gbytes.Say("The self has samadhi"))
 			Expect(stderr).To(gbytes.Say("[1 end received]"))
+		})
+
+		It("is able to call through", func() {
+			sourceString(`
+			  test_main() {
+			    printf "One for all"
+			  }
+			`)
+
+			gobs := []GoBMock{SpyAndCallThrough("printf")}
+			ApplyMocks(bash, gobs)
+			bash.Run("test_main", []string{})
+
+			Expect(stdout).To(gbytes.Say("One for all"))
+			Expect(stderr).To(gbytes.Say("\\[1\\] printf One for all"))
+		})
+
+		It("pipes the input when calling through", func() {
+			sourceString(`
+			test_main() {
+			  echo "Oranges and
+			  lemons
+			  say the bells
+			  of St. Clement's" | grep "$1"
+			}
+			`)
+
+			gobs := []GoBMock{SpyAndCallThrough("grep")}
+			ApplyMocks(bash, gobs)
+			bash.Run("test_main", []string{"lemo"})
+
+			Expect(stderr).To(gbytes.Say("\\[1\\] grep lemo"))
+			Expect(stderr).To(gbytes.Say("\\[1 received"))
+			Expect(stdout).To(gbytes.Say("lemons"))
 		})
 	})
 
@@ -158,6 +192,20 @@ var _ = Describe("Integration", func() {
 			Expect(err).NotTo(HaveOccurred())
 			Expect(status).To(Equal(0))
 			Expect(stdout).To(gbytes.Say("My child should bring home 0 bad grades"))
+		})
+
+		It("is able to call through", func() {
+			sourceString(`test_main() { printf "monkey"; printf "honey"; }`)
+
+			gobs := []GoBMock{MockOrCallThrough("printf", "echo berries", "[ $1 == 'monkey' ]")}
+			ApplyMocks(bash, gobs)
+			bash.Run("test_main", []string{})
+
+			Expect(stderr).To(gbytes.Say("\\[1\\] printf monkey"))
+			Expect(stderr).To(gbytes.Say("\\[2\\] printf honey"))
+			Expect(stdout).To(gbytes.Say("monkey"))
+			Expect(stdout).NotTo(gbytes.Say("honey"))
+			Expect(string(stdout.Contents())).To(ContainSubstring("berries"))
 		})
 	})
 

@@ -25,4 +25,12 @@ const (
 	mockDefinition   = "%[2]s\n"
 	scriptEnd        = "}\n"
 	exportDefinition = "export -f %s\n"
+
+	callThroughDefinition = `
+	  if [ ${in_line_count} -gt 0 ]; then
+	    echo $(IFS=$'\n'; echo ${in_lines[*]}) | $(which %[1]s) "$@"
+	  else
+	    $(which %[1]s) "$@"
+	  fi
+  	`
 )
