@@ -50,7 +50,7 @@ var _ = Describe("Integration", func() {
 			}`
 	Context("Stub", func() {
 		It("stubs executables", func() {
-			gobs := []GoBMock{Stub("curl")}
+			gobs := []Gob{Stub("curl")}
 			ApplyMocks(bash, gobs)
 			status, err := bash.Run("curl", []string{"xyz://nothing.to.see.here"})
 			Expect(err).NotTo(HaveOccurred())
@@ -63,7 +63,7 @@ var _ = Describe("Integration", func() {
 				  echo "Yay!" | curl abs://urdly.namedurl
 				}`)
 
-			gobs := []GoBMock{Stub("curl")}
+			gobs := []Gob{Stub("curl")}
 			ApplyMocks(bash, gobs)
 			status, err := bash.Run("main_test", []string{})
 			Expect(err).NotTo(HaveOccurred())
@@ -73,7 +73,7 @@ var _ = Describe("Integration", func() {
 		It("can be used in a child process", func() {
 			sourceString(subShellTest)
 
-			gobs := []GoBMock{Stub("curl")}
+			gobs := []Gob{Stub("curl")}
 			ApplyMocks(bash, gobs)
 			status, err := bash.Run("main_test", []string{})
 			Expect(err).NotTo(HaveOccurred())
@@ -84,7 +84,7 @@ var _ = Describe("Integration", func() {
 
 	Context("Spy", func() {
 		It("stubs the executable", func() {
-			gobs := []GoBMock{Spy("curl")}
+			gobs := []Gob{Spy("curl")}
 			ApplyMocks(bash, gobs)
 			status, err := bash.Run("curl", []string{"xyz://nothing.to.see.here"})
 			Expect(err).NotTo(HaveOccurred())
@@ -92,14 +92,14 @@ var _ = Describe("Integration", func() {
 		})
 
 		It("reports the arguments", func() {
-			gobs := []GoBMock{Spy("curl")}
+			gobs := []Gob{Spy("curl")}
 			ApplyMocks(bash, gobs)
 			bash.Run("curl", []string{"xyz://nothing.to.see.here"})
 			Expect(stderr).To(gbytes.Say("curl xyz://nothing.to.see.here"))
 		})
 
 		It("reports the number of the call", func() {
-			gobs := []GoBMock{Spy("curl")}
+			gobs := []Gob{Spy("curl")}
 			ApplyMocks(bash, gobs)
 			sourceString("test_main() { curl abc; curl cfg; curl dbc; }")
 			bash.Run("test_main", []string{""})
@@ -113,7 +113,7 @@ var _ = Describe("Integration", func() {
 				test_main() {
 				  printf "Waves travel with malaria.\nThe self has samadhi\n" | curl
 				}`)
-			gobs := []GoBMock{Spy("curl")}
+			gobs := []Gob{Spy("curl")}
 			ApplyMocks(bash, gobs)
 			bash.Run("test_main", []string{})
 			Expect(stderr).To(gbytes.Say("<1 received> input:\n"))
@@ -129,7 +129,7 @@ var _ = Describe("Integration", func() {
 			  }
 			`)
 
-			gobs := []GoBMock{SpyAndCallThrough("printf")}
+			gobs := []Gob{SpyAndCallThrough("printf")}
 			ApplyMocks(bash, gobs)
 			bash.Run("test_main", []string{})
 
@@ -147,7 +147,7 @@ var _ = Describe("Integration", func() {
 			}
 			`)
 
-			gobs := []GoBMock{SpyAndCallThrough("grep")}
+			gobs := []Gob{SpyAndCallThrough("grep")}
 			ApplyMocks(bash, gobs)
 			bash.Run("test_main", []string{"lemo"})
 
@@ -159,7 +159,7 @@ var _ = Describe("Integration", func() {
 
 	Context("Mock", func() {
 		It("stubs the executable", func() {
-			gobs := []GoBMock{Mock("curl", "")}
+			gobs := []Gob{Mock("curl", "")}
 			ApplyMocks(bash, gobs)
 			status, err := bash.Run("curl", []string{"zabi://daba.dooooo"})
 			Expect(err).NotTo(HaveOccurred())
@@ -167,7 +167,7 @@ var _ = Describe("Integration", func() {
 		})
 
 		It("can simulate the return code", func() {
-			gobs := []GoBMock{Mock("curl", "return 1")}
+			gobs := []Gob{Mock("curl", "return 1")}
 			ApplyMocks(bash, gobs)
 			status, err := bash.Run("curl", []string{"https://google.ie"})
 			Expect(err).NotTo(HaveOccurred())
@@ -175,7 +175,7 @@ var _ = Describe("Integration", func() {
 		})
 
 		It("produces predefined output", func() {
-			gobs := []GoBMock{Mock("curl", "echo 'Such much wow'")}
+			gobs := []Gob{Mock("curl", "echo 'Such much wow'")}
 			ApplyMocks(bash, gobs)
 			status, err := bash.Run("curl", []string{"boop://dodge.for.prezident"})
 			Expect(err).NotTo(HaveOccurred())
@@ -186,7 +186,7 @@ var _ = Describe("Integration", func() {
 		It("can be exported to child processes", func() {
 			sourceString(subShellTest)
 
-			gobs := []GoBMock{Mock("curl", "")}
+			gobs := []Gob{Mock("curl", "")}
 			ApplyMocks(bash, gobs)
 			status, err := bash.Run("main_test", []string{})
 			Expect(err).NotTo(HaveOccurred())
@@ -197,7 +197,7 @@ var _ = Describe("Integration", func() {
 		It("is able to call through", func() {
 			sourceString(`test_main() { printf "monkey"; printf "honey"; }`)
 
-			gobs := []GoBMock{MockOrCallThrough("printf", "echo berries", "[ $1 == 'monkey' ]")}
+			gobs := []Gob{MockOrCallThrough("printf", "echo berries", "[ $1 == 'monkey' ]")}
 			ApplyMocks(bash, gobs)
 			bash.Run("test_main", []string{})
 

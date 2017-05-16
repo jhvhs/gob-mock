@@ -7,11 +7,11 @@ import "fmt"
 // as well as any data passed into it via STDIN.
 // All reporting messages are sent to STDERR.
 // The `mockScript` string will be inserted at the end.
-func Mock(name string, mockScript string) GoBMock {
+func Mock(name string, mockScript string) Gob {
 	return &mock{name: name, script: mockScript, condition: ""}
 }
 
-func MockOrCallThrough(name string, mockScript string, callThroughCondition string) GoBMock {
+func MockOrCallThrough(name string, mockScript string, callThroughCondition string) Gob {
 	return &mock{name: name, script: mockScript, condition: callThroughCondition}
 }
 

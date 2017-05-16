@@ -3,7 +3,7 @@ package gobmock
 import "fmt"
 
 // Produces a bash function with a given name.
-func Stub(name string) GoBMock {
+func Stub(name string) Gob {
 	return &stub{name: name}
 }
 

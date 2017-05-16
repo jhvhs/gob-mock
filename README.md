@@ -10,7 +10,7 @@ Stub is the most simple version of a mock. It will silently drop the call to the
 
 ```go
   bash := basher.NewContext("/path/to/bash", false)
-  mocks := []GoBMock{Stub("wget")}
+  mocks := []Gob{Stub("wget")}
   ApplyMocks(bash, mocks)
   status, _ := bash.Run("wget", []string{"zaa://qwee.dooo"})
   Expect(status).To(Equal(0))
@@ -22,7 +22,7 @@ Spy does everything a stub does, but in addition, it will print the function nam
 ```go
   bash := basher.NewContext("/path/to/bash", false)
   bash.StdErr = gbytes.NewBuffer()
-  mocks := []GoBMock{Spy("wget")}
+  mocks := []Gob{Spy("wget")}
   ApplyMocks(bash, mocks)
   status, _ := bash.Run("wget", []string{"zaa://qwee.dooo", "fus", "ro", "dah"})
   Expect(status).To(Equal(0))
@@ -34,7 +34,7 @@ A spy is also able to invoke the underlying executable, if needed
   bash := basher.NewContext("/path/to/bash", false)
   bash.StdErr = gbytes.NewBuffer()
   bash.StdOut = gbytes.NewBuffer()
-  mocks := []GoBMock{SpyAndCallThrough("ls")}
+  mocks := []Gob{SpyAndCallThrough("ls")}
   ApplyMocks(bash, mocks)
   
   status, _ := bash.Run("ls", []string{"/"})
@@ -51,7 +51,7 @@ The mock may produce output which depends on the supplied arguments:
   bash := basher.NewContext("/path/to/bash", false)
   bash.StdErr = gbytes.NewBuffer()
   bash.StdOut = gbytes.NewBuffer()
-  mocks := []GoBMock{Mock("wget", "if [[ $1 == 'quux' ]]; then echo 'Yes'; else echo 'No'; fi")}
+  mocks := []Gob{Mock("wget", "if [[ $1 == 'quux' ]]; then echo 'Yes'; else echo 'No'; fi")}
   ApplyMocks(bash, mocks)
   status, _ := bash.Run("wget", []string{"quux", "fus", "ro", "dah"})
   Expect(status).To(Equal(0))
@@ -63,7 +63,7 @@ An exit code can be simulated by using the `return` keyword with the appropriate
 
 ```go
   bash := basher.NewContext("/path/to/bash", false)
-  mocks := []GoBMock{Mock("wget", "return 12")}
+  mocks := []Gob{Mock("wget", "return 12")}
   ApplyMocks(bash, mocks)
   status, _ := bash.Run("wget", []string{"quux", "fus", "ro", "dah"})
   Expect(status).To(Equal(12))
@@ -76,7 +76,7 @@ will be recorded.
   bash := basher.NewContext("/path/to/bash", false)
   bash.StdErr = gbytes.NewBuffer()
   bash.StdOut = gbytes.NewBuffer()
-  mocks := []GoBMock{MockOrCallThrough("curl", "echo 'Here is some contents'", `[[ "$1" =~ "google" ]]`)}
+  mocks := []Gob{MockOrCallThrough("curl", "echo 'Here is some contents'", `[[ "$1" =~ "google" ]]`)}
   ApplyMocks(bash, mocks)
   status, _ := bash.Run("curl", []string{"https://www.google.ie/"})
   Expect(status).To(Equal(0))
