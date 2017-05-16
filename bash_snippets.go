@@ -23,7 +23,7 @@ const (
           fi
         `
 	mockDefinition   = "%[2]s\n"
-	scriptEnd        = "}\n"
+	scriptEnd        = "\n return 0 \n } \n"
 	exportDefinition = "export -f %s\n"
 
 	callThroughDefinition = `
