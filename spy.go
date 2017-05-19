@@ -2,21 +2,27 @@ package gobmock
 
 import "fmt"
 
+const unconditionalCallthrough = "📣"
+
 // Produces a bash function with a given name.
 // The function will report it's arguments
 // as well as any data passed into it via STDIN.
 // All reporting messages are sent to STDERR.
 func Spy(name string) Gob {
-	return &spy{name: name, withCallThrough: false}
+	return &spy{name: name, callThroughCondition: ""}
 }
 
 func SpyAndCallThrough(name string) Gob {
-	return &spy{name: name, withCallThrough: true}
+	return &spy{name: name, callThroughCondition: unconditionalCallthrough}
+}
+
+func SpyAndConditionallyCallThrough(name string, callthroughCondition string) Gob {
+	return &spy{name: name, callThroughCondition: callthroughCondition}
 }
 
 type spy struct {
-	name            string
-	withCallThrough bool
+	name                 string
+	callThroughCondition string
 }
 
 func (s *spy) MockContents() string {
@@ -29,8 +35,10 @@ func (s *spy) spyExport() string {
 
 func (s *spy) spyFunction() string {
 	script := scriptStart + spyDefinition
-	if s.withCallThrough {
+	if s.callThroughCondition == unconditionalCallthrough {
 		script = script + callThroughDefinition
+	} else if s.callThroughCondition != "" {
+		script = script + "if " + s.callThroughCondition + "; then\n" + callThroughDefinition + "\nfi\n"
 	}
-	return fmt.Sprintf(script + scriptEnd, s.name)
+	return fmt.Sprintf(script+scriptEnd, s.name)
 }

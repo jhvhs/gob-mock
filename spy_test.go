@@ -22,9 +22,19 @@ var _ = Describe("Spy", func() {
 		Expect(spy).To(ContainSubstring("while read -r -t0.1; do"))
 	})
 
+	It("does not call through by default", func() {
+		spy := Spy("bee").MockContents()
+		Expect(spy).NotTo(ContainSubstring("$(which bee)"))
+	})
+
 	It("can call through to the executable", func() {
 		spy := SpyAndCallThrough("squash").MockContents()
 		Expect(spy).To(ContainSubstring("$(which squash)"))
 	})
 
+	It("can include a condition for a call through", func() {
+		spy := SpyAndConditionallyCallThrough("raspbery", "[[ 3 -ne 4 ]]")
+		Expect(spy.MockContents()).To(ContainSubstring("if [[ 3 -ne 4 ]]; then"))
+	})
 })
+

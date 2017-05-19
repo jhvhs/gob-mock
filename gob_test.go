@@ -137,6 +137,23 @@ var _ = Describe("Integration", func() {
 			Expect(stderr).To(gbytes.Say("<1> printf One for all"))
 		})
 
+		It("is able to call through on a condition", func() {
+			sourceString(`
+			test_main() {
+			  printf Cats
+			  printf Dogz
+			}
+			`)
+			gobs := []Gob{SpyAndConditionallyCallThrough("printf", "[[ $1 =~ at ]]")}
+			ApplyMocks(bash, gobs)
+			bash.Run("test_main", []string{})
+
+			Expect(stdout).To(gbytes.Say("Cats"))
+			Expect(stdout).NotTo(gbytes.Say("Dogz"))
+			Expect(stderr).To(gbytes.Say("<1> printf Cats"))
+			Expect(stderr).To(gbytes.Say("<2> printf Dogz"))
+		})
+
 		It("pipes the input when calling through", func() {
 			sourceString(`
 			test_main() {
