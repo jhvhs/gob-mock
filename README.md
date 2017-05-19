@@ -43,6 +43,26 @@ A spy is also able to invoke the underlying executable, if needed
   Expect(bash.StdOut).To(gbytes.Say("etc"))
 ```
 
+The invocation of the underlying executable could be conditional
+
+```go
+  bash := basher.NewContext("/path/to/bash", false)
+  bash.StdErr = gbytes.NewBuffer()
+  bash.StdOut = gbytes.NewBuffer()
+  mocks := []Gob{SpyAndConditionallyCallThrough("printf", `[[ "$1" =~ at ]]`)}
+  ApplyMocks(bash, mocks)
+  
+  status, _ := bash.Run("printf", []string{"Catz"})
+  Expect(status).To(Equal(0))
+  Expect(bash.StdErr).To(gbytes.Say("<1> printf Catz"))
+  Expect(bash.StdOut).To(gbytes.Say("Catz"))
+  
+  status, _ := bash.Run("printf", []string{"Doggos"})
+  Expect(status).To(Equal(0))
+  Expect(bash.StdErr).To(gbytes.Say("<1> printf Doggos"))
+  Expect(bash.StdOut).NotTo(gbytes.Say("Doggos"))
+```
+
 ### Mocks
 A mock does everything that a spy does, but also provides an entry point into the mocking function. 
 
