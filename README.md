@@ -63,6 +63,10 @@ The invocation of the underlying executable could be conditional
   Expect(bash.StdOut).NotTo(gbytes.Say("Doggos"))
 ```
 
+All types of spies also have a variation with a `Shallow` prefix. A shallow spy would not
+be exported. This is useful for preventing contamination of other scripts called from within
+the script under test. For examples, see the [integration tests](./gob_test.go).
+
 ### Mocks
 A mock does everything that a spy does, but also provides an entry point into the mocking function. 
 

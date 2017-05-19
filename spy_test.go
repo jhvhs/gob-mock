@@ -36,5 +36,25 @@ var _ = Describe("Spy", func() {
 		spy := SpyAndConditionallyCallThrough("raspbery", "[[ 3 -ne 4 ]]")
 		Expect(spy.MockContents()).To(ContainSubstring("if [[ 3 -ne 4 ]]; then"))
 	})
-})
 
+	It("is exported by default", func() {
+		spy := Spy("on-me").MockContents()
+		Expect(spy).To(ContainSubstring("export -f on-me"))
+	})
+	Context("shallow spy", func() {
+		It("does not export a regular spy", func() {
+			spy := ShallowSpy("on-you").MockContents()
+			Expect(spy).NotTo(ContainSubstring("export -f on-you"))
+		})
+
+		It("doesn't export a call through spy", func() {
+			spy := ShallowSpyAndCallThrough("vixen").MockContents()
+			Expect(spy).NotTo(ContainSubstring("export -f vixen"))
+		})
+
+		It("doesn't export a conditionally call through spy", func() {
+			spy := ShallowSpyAndConditionallyCallThrough("shutter", "[[ 1 -eq 2 ]]").MockContents()
+			Expect(spy).NotTo(ContainSubstring("export -f shutter"))
+		})
+	})
+})
