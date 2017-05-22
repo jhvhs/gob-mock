@@ -1,6 +1,10 @@
 package gobmock
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/tonnerre/golang-text"
+)
 
 const unconditionalCallthrough = "📣"
 
@@ -86,7 +90,11 @@ func (s *spy) spyFunction() string {
 	if s.callThroughCondition == unconditionalCallthrough {
 		script = script + callThroughDefinition
 	} else if s.callThroughCondition != "" {
-		script = script + "if " + s.callThroughCondition + "; then\n" + callThroughDefinition + "\nfi\n"
+		script = script + s.conditionalCallThrough()
 	}
 	return fmt.Sprintf(script+scriptEnd, s.name)
+}
+
+func (s *spy) conditionalCallThrough() string {
+	return text.Indent("\nif "+s.callThroughCondition+"; then\n"+callThroughDefinition+"fi\n", "  ")
 }

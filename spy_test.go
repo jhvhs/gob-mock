@@ -13,7 +13,7 @@ var _ = Describe("Spy", func() {
 
 	It("includes a basic shell spy", func() {
 		spy := Spy("chicken-with-a-pulley").MockContents()
-		Expect(spy).To(MatchRegexp("^chicken-with-a-pulley\\(\\) {\\s+"))
+		Expect(spy).To(MatchRegexp("^\n# Gob\nchicken-with-a-pulley\\(\\) {\\s+"))
 		Expect(spy).To(MatchRegexp("echo.* > /dev/fd/2"))
 	})
 
