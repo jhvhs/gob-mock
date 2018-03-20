@@ -41,6 +41,12 @@ var _ = Describe("Spy", func() {
 		spy := Spy("on-me").MockContents()
 		Expect(spy).To(ContainSubstring("export -f on-me"))
 	})
+
+	It("can skip reading input", func() {
+		spy := SpyWithoutReading("raspbery")
+		Expect(spy.MockContents()).NotTo(ContainSubstring("while read -r -t0.1; do"))
+	})
+
 	Context("shallow spy", func() {
 		It("does not export a regular spy", func() {
 			spy := ShallowSpy("on-you").MockContents()

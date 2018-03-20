@@ -24,6 +24,11 @@ const (
     echo "<${callCounter} end received>" > /dev/fd/2
   fi
 `
+	spyWithoutReadingDefinition = `
+  # Spy
+  callCounter=$((callCounter + 1))
+  echo "<${callCounter}> %[1]s $*" > /dev/fd/2
+`
 	mockDefinition   = "\n  # Mock\n  %[2]s\n"
 	scriptEnd        = "\n  }\n"
 	exportDefinition = "export -f %s\n"
