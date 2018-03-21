@@ -19,13 +19,25 @@ func MockOrCallThrough(name string, mockScript string, callThroughCondition stri
 }
 
 type mock struct {
-	name      string
-	script    string
-	condition string
+	name              string
+	script            string
+	condition         string
+	shouldSkipReading bool
 }
 
+// Produces a mock with the reading portion disabled.
+// It will not consume any data passed into it via STDIN.
 func (m *mock) MockContents() string {
 	return m.mockFunction() + m.mockExport()
+}
+
+func (m *mock) WithoutReading() Gob {
+	return &mock{
+		name: m.name,
+		script: m.script,
+		condition: m.condition,
+		shouldSkipReading: true,
+	}
 }
 
 func (m *mock) mockExport() string {
@@ -33,7 +45,7 @@ func (m *mock) mockExport() string {
 }
 
 func (m *mock) mockFunction() string {
-	script := scriptStart + spyDefinition + m.mockBody() + scriptEnd
+	script := scriptStart + m.spyDefinition() + m.mockBody() + scriptEnd
 	return fmt.Sprintf(script, m.name, m.script)
 }
 
@@ -44,6 +56,13 @@ func (m *mock) mockBody() string {
 	return mockDefinition
 }
 
-func (m *mock)callThrough() string {
-	return text.Indent("\nif " + m.condition + "; then\n" + callThroughDefinition + "else\n" + mockDefinition + "fi\n", "  ")
+func (m *mock) spyDefinition() string {
+	if m.shouldSkipReading {
+		return spyWithoutReadingDefinition
+	}
+	return spyDefinition
+}
+
+func (m *mock) callThrough() string {
+	return text.Indent("\nif "+m.condition+"; then\n"+callThroughDefinition+"else\n"+mockDefinition+"fi\n", "  ")
 }

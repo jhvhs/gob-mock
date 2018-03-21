@@ -68,16 +68,6 @@ func ShallowSpyAndConditionallyCallThrough(name string, callThroughCondition str
 	return &spy{name: name, callThroughCondition: callThroughCondition, shouldExport: false}
 }
 
-// Produces a bash function with a given name.
-// The function will report it's arguments,
-// but will not read any data passed into it via STDIN.
-// Be careful when using this spy with `set -o pipefail`.
-// All reporting messages are sent to STDERR.
-// The function is exported for use in child processes
-func SpyWithoutReading(name string) Gob {
-	return &spy{name: name, shouldSkipReading: true}
-}
-
 type spy struct {
 	name                 string
 	callThroughCondition string
@@ -90,6 +80,17 @@ func (s *spy) MockContents() string {
 		return s.spyFunction() + s.spyExport()
 	}
 	return s.spyFunction()
+}
+
+// Produces a spy with the reading portion disabled.
+// It will not consume any data passed into it via STDIN.
+func (s *spy) WithoutReading() Gob {
+	return &spy{
+		callThroughCondition: s.callThroughCondition,
+		name: s.name,
+		shouldExport: s.shouldExport,
+		shouldSkipReading: true,
+	}
 }
 
 func (s *spy) spyExport() string {

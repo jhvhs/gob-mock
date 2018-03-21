@@ -43,7 +43,7 @@ var _ = Describe("Spy", func() {
 	})
 
 	It("can skip reading input", func() {
-		spy := SpyWithoutReading("raspbery")
+		spy := Spy("raspbery").WithoutReading()
 		Expect(spy.MockContents()).NotTo(ContainSubstring("while read -r -t0.1; do"))
 	})
 

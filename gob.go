@@ -4,6 +4,7 @@ import "github.com/progrium/go-basher"
 
 type Gob interface {
 	MockContents() string
+	WithoutReading() Gob
 }
 
 func ApplyMocks(bash *basher.Context, mocks []Gob) {

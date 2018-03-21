@@ -17,4 +17,9 @@ var _ = Describe("Stub", func() {
 		Expect(stub).To(MatchRegexp("while read -r -t0.1; do\\s+:\\s+done"))
 	})
 
+	It("does not read STDIN when WithoutReading is specified", func() {
+	    stub := Stub("Sunt_fermiumes").WithoutReading().MockContents()
+	    Expect(stub).NotTo(ContainSubstring("while read -r -t0.1; do"))
+	})
+
 })

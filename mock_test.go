@@ -28,4 +28,9 @@ var _ = Describe("Mock", func() {
 		Expect(mock.MockContents()).To(ContainSubstring("monkey"))
 	})
 
+	It("should not include pipe handling when WithoutReading is used", func() {
+	    mock := Mock("1coordinates0", "").WithoutReading().MockContents()
+	    Expect(mock).NotTo(ContainSubstring("while read -r -t0.1; do"))
+	})
+
 })
